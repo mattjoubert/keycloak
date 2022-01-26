@@ -80,7 +80,7 @@ HTTP/TLS:
                        detected based on the file name.
 --https-port <port>  The used HTTPS port. Default: 8443.
 --https-protocols <protocols>
-                     The list of protocols to explicitly enable.
+                     The list of protocols to explicitly enable. Default: TLSv1.3.
 --https-trust-store-file <file>
                      The trust store which holds the certificate information of the certificates to
                        trust.
@@ -94,6 +94,11 @@ Proxy:
 
 --proxy <mode>       The proxy address forwarding mode if the server is behind a reverse proxy.
                        Possible values are: none,edge,reencrypt,passthrough Default: none.
+
+Vault:
+
+--vault-dir <dir>    If set, secrets can be obtained by reading the content of files within the
+                       given directory.
 
 Do NOT start the server using this command when deploying to production.
 

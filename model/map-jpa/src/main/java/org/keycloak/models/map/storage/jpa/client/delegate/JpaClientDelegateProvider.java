@@ -17,28 +17,31 @@
 package org.keycloak.models.map.storage.jpa.client.delegate;
 
 import java.util.UUID;
+
 import javax.persistence.EntityManager;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.JoinType;
 import javax.persistence.criteria.Root;
+
 import org.keycloak.models.map.client.MapClientEntity;
 import org.keycloak.models.map.client.MapClientEntityFields;
+import org.keycloak.models.map.common.EntityField;
 import org.keycloak.models.map.common.delegate.DelegateProvider;
 import org.keycloak.models.map.storage.jpa.client.entity.JpaClientEntity;
 
-public class JpaClientDelegateProvider<T extends MapClientEntity> implements DelegateProvider {
+public class JpaClientDelegateProvider implements DelegateProvider<MapClientEntity> {
 
     private JpaClientEntity delegate;
     private final EntityManager em;
 
-    public JpaClientDelegateProvider(JpaClientEntity deledate, EntityManager em) {
-        this.delegate = deledate;
+    public JpaClientDelegateProvider(JpaClientEntity delegate, EntityManager em) {
+        this.delegate = delegate;
         this.em = em;
     }
 
     @Override
-    public JpaClientEntity getDelegate(boolean isRead, Object field, Object... parameters) {
+    public MapClientEntity getDelegate(boolean isRead, Enum<? extends EntityField<MapClientEntity>> field, Object... parameters) {
         if (delegate.isMetadataInitialized()) return delegate;
         if (isRead) {
             if (field instanceof MapClientEntityFields) {

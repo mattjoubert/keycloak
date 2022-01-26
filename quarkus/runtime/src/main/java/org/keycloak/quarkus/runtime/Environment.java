@@ -18,6 +18,7 @@
 package org.keycloak.quarkus.runtime;
 
 import static org.keycloak.quarkus.runtime.configuration.Configuration.getBuildTimeProperty;
+import static org.keycloak.quarkus.runtime.configuration.Configuration.getConfig;
 
 import java.io.File;
 import java.io.FilenameFilter;
@@ -30,6 +31,7 @@ import java.util.Optional;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
+import io.quarkus.bootstrap.runner.RunnerClassLoader;
 import io.quarkus.runtime.LaunchMode;
 import io.quarkus.runtime.configuration.ProfileManager;
 import org.apache.commons.lang3.SystemUtils;
@@ -47,7 +49,11 @@ public final class Environment {
     private Environment() {}
 
     public static Boolean isRebuild() {
-        return Boolean.getBoolean("quarkus.launch.rebuild");
+        return !isRuntimeMode();
+    }
+
+    public static Boolean isRuntimeMode() {
+        return Thread.currentThread().getContextClassLoader() instanceof RunnerClassLoader;
     }
 
     public static String getHomeDir() {
@@ -107,6 +113,13 @@ public final class Environment {
             System.setProperty("mp.config.profile", profile);
             System.setProperty(ProfileManager.QUARKUS_TEST_PROFILE_PROP, profile);
         }
+    }
+    public static String getCurrentOrPersistedProfile() {
+        String profile = getProfile();
+        if(profile == null) {
+            profile = getConfig().getRawValue(PROFILE);
+        }
+        return profile;
     }
 
     public static String getProfileOrDefault(String defaultProfile) {
@@ -178,5 +191,9 @@ public final class Environment {
 
     public static boolean isDistribution() {
         return getHomeDir() != null;
+    }
+
+    public static boolean isRebuildCheck() {
+        return Boolean.getBoolean("kc.config.rebuild-and-exit");
     }
 }
